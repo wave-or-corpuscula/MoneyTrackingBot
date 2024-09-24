@@ -1,0 +1,1 @@
+from .money_tracker_menu import money_tracker_router

@@ -17,8 +17,6 @@ from tgbot.handlers import routers
 
 async def on_startup(dp: Dispatcher, db: DataBase):
     db.create_tables()
-    # await set_default_commands(dp)
-    # await notify_admins(dp)
 
 async def main():
 
@@ -26,15 +24,10 @@ async def main():
     logging.basicConfig(level=logging.INFO)
     config = load_config(".env")
 
-    # loop = asyncio.get_event_loop()
-
     storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
     db = DataBase(config)
-
-    # bot.__setattr__("config", config)
-    # bot.__setattr__("db", db)
 
     dp.include_routers(*routers)
 

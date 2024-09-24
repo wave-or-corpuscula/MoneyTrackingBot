@@ -1,6 +1,8 @@
 from .users import *
 
 routers = [
-    commands_router,
-    echo_router,
+    money_tracker_router,
+
+    
+    common_router,
 ]
