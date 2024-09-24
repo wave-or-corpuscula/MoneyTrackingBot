@@ -1,18 +1,18 @@
 import asyncio
 
+import logging
+
 import nest_asyncio
 
 from aiogram import Bot, Dispatcher
+from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
-
-# from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from tgbot.config import load_config
 from tgbot.utils.db_api.sqlite import DataBase
 
-from tgbot.handlers.users.echo import register_echo_handlers
-
+from tgbot.handlers import routers
 
 
 async def on_startup(dp: Dispatcher, db: DataBase):
@@ -20,27 +20,23 @@ async def on_startup(dp: Dispatcher, db: DataBase):
     # await set_default_commands(dp)
     # await notify_admins(dp)
 
-def register_handlers(dp: Dispatcher):
-    register_echo_handlers(dp)
-
-
 async def main():
 
     nest_asyncio.apply()
-
+    logging.basicConfig(level=logging.INFO)
     config = load_config(".env")
 
-    loop = asyncio.get_event_loop()
+    # loop = asyncio.get_event_loop()
 
     storage = MemoryStorage()
-    bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode='HTML'))
-    dp = Dispatcher(storage=storage, loop=loop)
+    bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    dp = Dispatcher(storage=storage)
     db = DataBase(config)
 
-    bot.__setattr__("config", config)
-    bot.__setattr__("db", db)
+    # bot.__setattr__("config", config)
+    # bot.__setattr__("db", db)
 
-    register_handlers(dp)
+    dp.include_routers(*routers)
 
     try:
         await on_startup(dp, db)
