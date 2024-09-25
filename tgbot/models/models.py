@@ -1,11 +1,16 @@
+import datetime
+
 from peewee import (
     Model, IntegerField, FloatField, CharField, DateTimeField, ForeignKeyField
 )
 from playhouse.sqlite_ext import SqliteExtDatabase
-import datetime
+
+from tgbot.config import load_config
+
+config = load_config(".env")
 
 # Создание базы данных SQLite
-db = SqliteExtDatabase('finances.db')
+db = SqliteExtDatabase(config.db.database)
 
 # Определение моделей
 class BaseModel(Model):
@@ -14,6 +19,7 @@ class BaseModel(Model):
 
 class User(BaseModel):
     id = IntegerField(primary_key=True)
+    full_name = CharField()
     join_date = DateTimeField(default=datetime.datetime.now)
 
 class SpendingType(BaseModel):

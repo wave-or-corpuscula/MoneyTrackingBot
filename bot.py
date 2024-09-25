@@ -10,13 +10,14 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from tgbot.config import load_config
-from tgbot.utils.db_api.sqlite import DataBase
+from tgbot.utils.db_api.sqlite import Database
 
 from tgbot.handlers import routers
 
 
-async def on_startup(dp: Dispatcher, db: DataBase):
+async def on_startup(dp: Dispatcher, db: Database):
     db.create_tables()
+
 
 async def main():
 
@@ -27,12 +28,15 @@ async def main():
     storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
-    db = DataBase(config)
+    db = Database(config)
+
+    dp["db"] = db
 
     dp.include_routers(*routers)
 
     try:
         await on_startup(dp, db)
+        await bot.delete_webhook(drop_pending_updates=True)
         await dp.start_polling(bot)
     finally:
         await dp.storage.close()

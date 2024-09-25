@@ -1,1 +1,1 @@
-from .main_menu_keyboard import kb_main_menu
+from .common_keyboards import kb_main_menu, kb_back

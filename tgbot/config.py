@@ -35,5 +35,3 @@ def load_config(path: str = None):
             database=env.str('DB_NAME')
         ),
     )
-
-
