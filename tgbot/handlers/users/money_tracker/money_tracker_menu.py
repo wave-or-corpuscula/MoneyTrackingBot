@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 from aiogram.utils.formatting import as_list, Italic
 
+from tgbot.utils import Database
 from tgbot.states import MainMenuStates, MoneyTrackerStates
 from tgbot.misc.callback_data import MoneyTrackerCallbackData, CommonCallbackData
 
@@ -42,12 +43,15 @@ async def add_spending_script(callback: types.CallbackQuery, state: FSMContext):
 
 @money_tracker_router.callback_query(F.data == MoneyTrackerCallbackData.SHOW_STATS.value,
                                      StateFilter(MoneyTrackerStates.choosing_service))
-async def show_statistics(callback: types.CallbackQuery, state: FSMContext):
+async def show_statistics(callback: types.CallbackQuery, state: FSMContext, db: Database):
+
+    week_spend = db.get_week_spending(callback.from_user.id)
+    month_spend = db.get_month_spending(callback.from_user.id)
     # TODO: Implement statistics gathering
     text = [
         "<b>Статистика</b>\n",
-        f"Траты за неделю: {10}",
-        f"Траты за месяц: {100}",
+        f"<i>Траты за неделю: <u>{week_spend}</u></i>",
+        f"<i>Траты за месяц: <u>{month_spend}</u></i>",
     ]
 
     await state.set_state(MoneyTrackerStates.statistics)

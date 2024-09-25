@@ -45,7 +45,6 @@ async def choosing_spending_type(callback: types. CallbackQuery, state: FSMConte
                              StateFilter(MoneyTrackerStates.add_spending))
 async def add_spending(message: types.Message, state: FSMContext, db: Database, bot: Bot):
     state_data = await state.get_data()
-    print(state_data)
     menu_message_id : Message = state_data.get("message_id")
     spending_type_id : int = state_data.get("spending_type_id")
     was_non_valid_input : bool = state_data.get("was_non_valid_input")
