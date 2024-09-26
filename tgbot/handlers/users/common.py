@@ -6,7 +6,7 @@ from aiogram.utils.formatting import Text, Bold, as_list, Italic
 
 from tgbot.states import MainMenuStates
 from tgbot.keyboards import kb_main_menu
-from tgbot.utils import Database
+from tgbot.utils import Database, ScreenManager
 
 
 common_router = Router(name=__name__)
@@ -16,8 +16,7 @@ common_router = Router(name=__name__)
 async def command_start(message: Message, state: FSMContext, db: Database):
     db.add_user(message.from_user.id, message.from_user.full_name)
     await state.set_state(MainMenuStates.choosing_service)
-    await message.answer("Добро пожаловать в бота по отслеживанию различных приколов. Выберите прикол для отслеживания:",
-                         reply_markup=kb_main_menu)
+    await message.answer(**ScreenManager.START_SCREEN.as_kwargs())
 
 # Продвинутое решение работы с пользовательским именем (ни и вообще, если нужно вывести то, что ввел пользователь)
 @common_router.message(Command("hello"), StateFilter("*"))
@@ -63,5 +62,4 @@ async def callback_echo(callback: types.CallbackQuery, state: FSMContext):
         f"Состояние: {await state.get_state()}",
         sep="\n",
     )
-    # await callback.answer(f"")
     await callback.message.answer(**content.as_kwargs())

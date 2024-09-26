@@ -2,12 +2,15 @@ import asyncio
 
 import logging
 
+from redis import Redis
+
 import nest_asyncio
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage
 
 from tgbot.config import load_config
 from tgbot.utils.db_api.sqlite import Database
@@ -25,7 +28,11 @@ async def main():
     logging.basicConfig(level=logging.INFO)
     config = load_config(".env")
 
-    storage = MemoryStorage()
+    if config.tg_bot.use_redis:
+        pass
+        # storage = RedisStorage() # TODO: Reddis initialization
+    else: 
+        storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
     db = Database(config)

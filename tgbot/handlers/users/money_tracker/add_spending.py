@@ -11,7 +11,7 @@ from tgbot.misc.callback_data import MoneyTrackerCallbackData, CommonCallbackDat
 
 from tgbot.keyboards import kb_main_menu, kb_back
 from tgbot.keyboards.money_tracker_keyboards import kb_money_tracker_menu
-from tgbot.utils import Database
+from tgbot.utils import Database, ScreenManager
 
 
 add_spending_router = Router(name=__name__)
@@ -20,12 +20,8 @@ add_spending_router = Router(name=__name__)
 @add_spending_router.callback_query(F.data == MoneyTrackerCallbackData.BACK.value,
                                     StateFilter(MoneyTrackerStates.choose_spending_type))
 async def cancel_choosing_spending_type(callback: types.CallbackQuery, state: FSMContext):
-    text = [
-        "<b>Отслеживание трат</b>\n",
-        "Выберите нужное:"
-    ]
     await state.set_state(MoneyTrackerStates.choosing_service)
-    await callback.message.edit_text("\n".join(text), reply_markup=kb_money_tracker_menu)
+    await callback.message.edit_text(**ScreenManager.MONEY_TRACKER_MENU.as_kwargs())
     
 
 
@@ -36,7 +32,7 @@ async def choosing_spending_type(callback: types. CallbackQuery, state: FSMConte
         spending_type_id = int(callback.data)
         await state.update_data({"spending_type_id": spending_type_id})
         await state.set_state(MoneyTrackerStates.add_spending)
-        await callback.message.edit_text("Введите вашу трату:", reply_markup=kb_back)
+        await callback.message.edit_text(**ScreenManager.ENTER_SPENDING.as_kwargs())
     except Exception:
         pass
 
@@ -64,11 +60,9 @@ async def add_spending(message: types.Message, state: FSMContext, db: Database, 
         await bot.edit_message_text(chat_id=message.chat.id, message_id=menu_message_id, text="\n".join(text), reply_markup=kb_money_tracker_menu)
     except:
         if not was_non_valid_input:
-            text = [
-                "<b>Трата должна быть целым или десятичным положительным числом!</b>\n",
-                "Введите размер траты:",
-            ]
-            await bot.edit_message_text(chat_id=message.chat.id, message_id=menu_message_id, text="\n".join(text), reply_markup=kb_back)
+            await bot.edit_message_text(chat_id=message.chat.id, 
+                                        message_id=menu_message_id, 
+                                        **ScreenManager.ENTER_SPENDING_INVALID.as_kwargs())
             await state.update_data({"was_non_valid_input": True})
     finally:
         await message.delete()
@@ -77,9 +71,5 @@ async def add_spending(message: types.Message, state: FSMContext, db: Database, 
 @add_spending_router.callback_query(F.data == CommonCallbackData.BACK.value,
                                     StateFilter(MoneyTrackerStates.add_spending))
 async def cancel_adding_spending(callback: types.CallbackQuery, state: FSMContext):
-    text = [
-        "<b>Отслеживание трат</b>\n",
-        "Выберите нужное:"
-    ]
     await state.set_state(MoneyTrackerStates.choosing_service)
-    await callback.message.edit_text("\n".join(text), reply_markup=kb_money_tracker_menu)
+    await callback.message.edit_text(**ScreenManager.MONEY_TRACKER_MENU.as_kwargs())

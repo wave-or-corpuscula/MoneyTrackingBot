@@ -23,6 +23,7 @@ class Database:
     def add_user(self, user_id: int, full_name: str):
         try:
             User.create(id=user_id, full_name=full_name)
+            # TODO: Добавление новому пользователю типов трат по-умолчанию (Еда, Развлечения, Здоровье)
             logging.info(f"DB User: {full_name} with id: {user_id} created")
         except Exception as e:
             logging.error(f"Error adding user {full_name}, id {user_id}. \nError: {e}")
@@ -34,31 +35,23 @@ class Database:
         except Exception as e:
             logging.error(f"Cannot create spending {spending} for user {user_id}. \nError: {e}")
 
+    def _get_user_spending_in_bounds(self, user_id: int, start_date: datetime, end_date: datetime):
+        bounds_spending = (Spending
+                           .select(fn.SUM(Spending.spending))
+                           .where(
+                               (Spending.user_id == user_id) &
+                               (Spending.spending_date >= start_date) &
+                               (Spending.spending_date <= end_date)
+                           )
+                           .scalar())
+        return round(bounds_spending, 2) if bounds_spending else 0
+
     def get_week_spending(self, user_id: int):
-        today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
-
-        start_of_week = today - timedelta(days=today.weekday())
-
-        sum_week = (Spending
-                    .select(fn.SUM(Spending.spending))
-                    .where(
-                        (Spending.user_id == user_id) &
-                        (Spending.spending_date >= start_of_week) &
-                        (Spending.spending_date <= today)
-                    )
-                    .scalar())
-        return sum_week
+        today = datetime.today()
+        start_of_week = (today - timedelta(days=today.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+        return self._get_user_spending_in_bounds(user_id, start_of_week, today)
 
     def get_month_spending(self, user_id: int):
-        today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
-        start_of_month = today.replace(day=1)
-
-        sum_month = (Spending
-                    .select(fn.SUM(Spending.spending))
-                    .where(
-                        (Spending.user_id == user_id) &  
-                        (Spending.spending_date >= start_of_month) &
-                        (Spending.spending_date <= today)
-                    )
-                    .scalar())
-        return sum_month
+        today = datetime.today()
+        start_of_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        return self._get_user_spending_in_bounds(user_id, start_of_month, today)
