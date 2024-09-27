@@ -35,7 +35,7 @@ async def main():
         storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
-    db = Database(config)
+    db = Database(config, default_spending_types=["Еда", "Развлечения", "Здоровье"])
 
     dp["db"] = db
 
@@ -55,5 +55,3 @@ if __name__ == "__main__":
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
         print("Bot stopped!")
-
-

@@ -1,5 +1,8 @@
-from aiogram.types import InlineKeyboardMarkup
+import logging
 
+from aiogram.types import InlineKeyboardMarkup, Message
+
+from tgbot.utils import Database
 from tgbot.keyboards import *
 
 
@@ -9,10 +12,35 @@ class Screen:
         self.text = text
         self.reply_markup = reply_markup
 
-    def as_kwargs(self):
-        if callable(self.reply_markup):
-            self.reply_markup = self.reply_markup()
-        return self.__dict__
+    def as_kwargs(self, **kwargs):
+        reply_markup = self.reply_markup(**kwargs) if callable(self.reply_markup) else self.reply_markup
+        text = self.text(**kwargs) if callable(self.text) else self.text
+        return {"text": text, "reply_markup": reply_markup}
+
+
+def show_statistics_text(user_id: int, db: Database):
+    week_spend = db.get_week_spending(user_id)
+    month_spend = db.get_month_spending(user_id)
+    text = [
+        "<b>Статистика</b>\n",
+        f"<i>Траты за месяц: <u>{month_spend}</u></i>",
+        f"<i>Траты за неделю: <u>{week_spend}</u></i>",
+    ]
+    return "\n".join(text)
+
+
+def spending_successful_added_text(user_spending: str,  spending_type_id: int, message: Message, db: Database):
+    user_spending = float(user_spending.replace(",", "."))
+    if user_spending < 0: raise Exception
+    db.add_spending(user_id=message.from_user.id, spending_type_id=spending_type_id, spending=user_spending)
+    logging.info(f"User: {message.from_user.full_name} added spending {user_spending}")
+
+    text = [
+        "<b>Отслеживание трат</b>\n",
+        f"<i>Трата <u>{user_spending}</u> успешно добавлена!</i>"
+    ]
+
+    return "\n".join(text)
 
 
 class ScreenManager:
@@ -34,6 +62,11 @@ class ScreenManager:
         reply_markup=kb_spending_types
     )
 
+    SPENDING_SUCCSESSFUL_ADDED = Screen(
+        text=spending_successful_added_text,
+        reply_markup=kb_money_tracker_menu
+    )
+
     ENTER_SPENDING = Screen(
         text="Введите вашу трату:",
         reply_markup=kb_back
@@ -47,4 +80,9 @@ class ScreenManager:
     SETTINGS_MENU = Screen(
         text="Выберите настройку:",
         reply_markup=kb_settings_menu
+    )
+
+    SHOW_STATISTICS = Screen(
+        text=show_statistics_text,
+        reply_markup=kb_statistics
     )

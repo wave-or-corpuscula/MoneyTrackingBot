@@ -12,18 +12,22 @@ from tgbot.models import User, SpendingType, Spending
 
 class Database:
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, default_spending_types: list):
         self.db = SqliteExtDatabase(config.db.database)
+        self.default_spending_types = default_spending_types
 
     def create_tables(self):
         self.db.connect()
         self.db.create_tables([User, SpendingType, Spending])
         self.db.close()
     
+    def _get_spending_types_rows(self, user_id: int):
+        return [{"user_id": user_id, "type_name": type_name} for type_name in self.default_spending_types]
+
     def add_user(self, user_id: int, full_name: str):
         try:
             User.create(id=user_id, full_name=full_name)
-            # TODO: Добавление новому пользователю типов трат по-умолчанию (Еда, Развлечения, Здоровье)
+            SpendingType.insert_many(self._get_spending_types_rows(user_id)).execute()
             logging.info(f"DB User: {full_name} with id: {user_id} created")
         except Exception as e:
             logging.error(f"Error adding user {full_name}, id {user_id}. \nError: {e}")
