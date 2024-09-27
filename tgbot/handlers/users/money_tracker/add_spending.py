@@ -47,18 +47,15 @@ async def add_spending(message: types.Message, state: FSMContext, db: Database, 
 
     user_spending = message.text
     try:
-        user_spending = float(user_spending.replace(",", "."))
-        if user_spending < 0: raise Exception
-        db.add_spending(user_id=message.from_user.id, spending_type_id=spending_type_id, spending=user_spending)
-        logging.info(f"User: {message.from_user.full_name} added spending {user_spending}")
-
-        text = [
-            "<b>Отслеживание трат</b>\n"
-            f"<i>Трата <u>{user_spending}</u> успешно добавлена!</i>"
-        ]
+        await bot.edit_message_text(chat_id=message.chat.id,
+                                    message_id=menu_message_id,
+                                    **ScreenManager.SPENDING_SUCCSESSFUL_ADDED.as_kwargs(message=message,
+                                                                                         user_spending=user_spending,
+                                                                                         spending_type_id=spending_type_id,
+                                                                                         db=db))
         await state.set_state(MoneyTrackerStates.choosing_service)
-        await bot.edit_message_text(chat_id=message.chat.id, message_id=menu_message_id, text="\n".join(text), reply_markup=kb_money_tracker_menu)
-    except:
+    except Exception as e:
+        print(e)
         if not was_non_valid_input:
             await bot.edit_message_text(chat_id=message.chat.id, 
                                         message_id=menu_message_id, 

@@ -5,7 +5,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.formatting import Text, Bold, as_list, Italic
 
 from tgbot.states import MainMenuStates
-from tgbot.keyboards import kb_main_menu
 from tgbot.utils import Database, ScreenManager
 
 

@@ -1,15 +1,16 @@
 from aiogram import types, F, Router, Bot
-from aiogram.types import Message
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 from aiogram.utils.formatting import as_list, Italic
 
+from tgbot.models import SpendingType
 from tgbot.utils import Database, ScreenManager
 from tgbot.states import MainMenuStates, MoneyTrackerStates
 from tgbot.misc.callback_data import MoneyTrackerCallbackData, CommonCallbackData
 
 
-from tgbot.keyboards.money_tracker_keyboards import kb_statistics
+from tgbot.keyboards.money_tracker_keyboards import kb_statistics, kb_spending_types
 
 
 money_tracker_router = Router(name=__name__)
@@ -34,30 +35,19 @@ async def back_to_main_menu(callback: types.CallbackQuery, state: FSMContext):
 async def add_spending_script(callback: types.CallbackQuery, state: FSMContext):
     await state.set_data({"chat_id": callback.message.chat.id, "message_id": callback.message.message_id})
     await state.set_state(MoneyTrackerStates.choose_spending_type)
+    await callback.message.edit_text(**ScreenManager.SPENDING_TYPE_CHOOSING.as_kwargs(user_id=callback.from_user.id))
 
-    await callback.message.edit_text(**ScreenManager.SPENDING_TYPE_CHOOSING.as_kwargs())
 
 @money_tracker_router.callback_query(F.data == MoneyTrackerCallbackData.SHOW_STATS.value,
                                      StateFilter(MoneyTrackerStates.choosing_service))
 async def show_statistics(callback: types.CallbackQuery, state: FSMContext, db: Database):
-
-    week_spend = db.get_week_spending(callback.from_user.id)
-    month_spend = db.get_month_spending(callback.from_user.id)
-    
-    text = [
-        "<b>Статистика</b>\n",
-        f"<i>Траты за месяц: <u>{month_spend}</u></i>",
-        f"<i>Траты за неделю: <u>{week_spend}</u></i>",
-    ]
-
     await state.set_state(MoneyTrackerStates.statistics)
-    await callback.message.edit_text("\n".join(text), reply_markup=kb_statistics)
+    await callback.message.edit_text(**ScreenManager.SHOW_STATISTICS.as_kwargs(user_id=callback.from_user.id, db=db))
 
 
 @money_tracker_router.callback_query(F.data == MoneyTrackerCallbackData.SETTINGS.value,
                                      StateFilter(MoneyTrackerStates.choosing_service))
 async def show_settings(callback: types.CallbackQuery, state: FSMContext):
-
     await state.set_state(MoneyTrackerStates.settings)
     await callback.message.edit_text(**ScreenManager.SETTINGS_MENU.as_kwargs())
 
