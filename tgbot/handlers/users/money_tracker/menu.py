@@ -7,7 +7,9 @@ from aiogram.utils.formatting import as_list, Italic
 from tgbot.models import SpendingType
 from tgbot.utils import Database, ScreenManager
 from tgbot.states import MainMenuStates, MoneyTrackerStates
+
 from tgbot.misc.callback_data import MoneyTrackerCallbackData, CommonCallbackData
+from tgbot.misc.callback_data.navigation import NavigationActions, NavigationCbData
 
 
 from tgbot.keyboards.money_tracker_keyboards import kb_statistics, kb_spending_types
@@ -23,8 +25,10 @@ async def money_tracker_main_menu(callback: types.CallbackQuery, state: FSMConte
     await callback.message.edit_text(**ScreenManager.MONEY_TRACKER_MENU.as_kwargs())
 
 
-@money_tracker_router.callback_query(F.data == MoneyTrackerCallbackData.BACK.value, 
-                                     StateFilter(MoneyTrackerStates.choosing_service))
+@money_tracker_router.callback_query(
+        NavigationCbData.filter(F.navigation == NavigationActions.back), 
+        StateFilter(MoneyTrackerStates.choosing_service)
+)
 async def back_to_main_menu(callback: types.CallbackQuery, state: FSMContext):
     await state.set_state(MainMenuStates.choosing_service)
     await callback.message.edit_text(**ScreenManager.START_SCREEN.as_kwargs())
@@ -48,6 +52,6 @@ async def show_statistics(callback: types.CallbackQuery, state: FSMContext, db: 
 @money_tracker_router.callback_query(F.data == MoneyTrackerCallbackData.SETTINGS.value,
                                      StateFilter(MoneyTrackerStates.choosing_service))
 async def show_settings(callback: types.CallbackQuery, state: FSMContext):
-    await state.set_state(MoneyTrackerStates.settings)
+    await state.set_state(MoneyTrackerStates.choosing_setting)
     await callback.message.edit_text(**ScreenManager.SETTINGS_MENU.as_kwargs())
 

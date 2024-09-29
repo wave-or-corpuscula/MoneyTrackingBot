@@ -25,7 +25,7 @@ async def on_startup(dp: Dispatcher, db: Database):
 
 
 async def set_webhook(bot: Bot, webhook_path: str):
-    webhook_url = f"https://a22b-46-216-242-85.ngrok-free.app{webhook_path}"
+    webhook_url = f"https://8815-46-216-242-85.ngrok-free.app{webhook_path}"
     await bot.set_webhook(url=webhook_url)
 
 
@@ -60,13 +60,14 @@ async def main():
         storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
-    db = Database(config, default_spending_types=["Еда", "Развлечения", "Здоровье"])
+    db = Database(config, default_spending_types=["Еда", "Развлечения", "Здоровье", "Другое"])
 
     dp["db"] = db
 
     dp.include_routers(*routers)
 
     try:
+        # Use webhooks
         if config.tg_bot.use_webhooks:
             app = web.Application()
             app.on_startup.append(lambda _: on_startup_webhooks(bot, webhook_path, _))
@@ -83,6 +84,7 @@ async def main():
                 port=8443
             )
         else:
+            # Use long polling
             await on_startup(dp, db)
             await bot.delete_webhook(drop_pending_updates=True)
             await dp.start_polling(bot)

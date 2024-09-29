@@ -6,7 +6,7 @@ class MoneyTrackerStates(StatesGroup):
     add_spending = State()
     choose_spending_type = State()
     show_stats = State()
-    settings = State()
+    choosing_setting = State()
     statistics = State()
     
-    edit_spending_types = State()
+    editing_spending_types = State()

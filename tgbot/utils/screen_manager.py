@@ -4,6 +4,7 @@ from aiogram.types import InlineKeyboardMarkup, Message
 
 from tgbot.utils import Database
 from tgbot.keyboards import *
+from tgbot.keyboards.money_tracker.spending_types_kb import build_spending_types_kb
 
 
 class Screen:
@@ -80,6 +81,11 @@ class ScreenManager:
     SETTINGS_MENU = Screen(
         text="Выберите настройку:",
         reply_markup=kb_settings_menu
+    )
+
+    SETTINGS_EDIT_SPENDING_TYPES = Screen(
+        text="Выберие действие:\n✏️ - изменить\n❌ - удалить",
+        reply_markup=build_spending_types_kb
     )
 
     SHOW_STATISTICS = Screen(

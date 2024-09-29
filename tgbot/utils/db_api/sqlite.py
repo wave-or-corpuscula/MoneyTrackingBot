@@ -1,6 +1,6 @@
-from peewee import fn
-
 import logging
+
+from peewee import fn, ModelSelect
 
 from datetime import datetime, timedelta
 
@@ -59,3 +59,7 @@ class Database:
         today = datetime.today()
         start_of_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         return self._get_user_spending_in_bounds(user_id, start_of_month, today)
+    
+    @staticmethod
+    def get_user_spending_types(user_id: int) -> ModelSelect:
+        return SpendingType.select().where((SpendingType.user_id == user_id))

@@ -8,6 +8,7 @@ routers = [
     add_spending_router,
     statistics_router,
     settings_router,
+    edit_spending_types_router,
 
     # Habits tracker routers
 
