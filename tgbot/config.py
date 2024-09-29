@@ -13,6 +13,7 @@ class TgBot:
     token: str
     admin_ids: list
     use_redis: bool
+    use_webhooks: bool
 
 
 @dataclass
@@ -30,6 +31,7 @@ def load_config(path: str = None):
             token=env.str("BOT_TOKEN"),
             admin_ids=list(map(int, env.list("ADMINS"))),
             use_redis=env.bool("USE_REDIS"),
+            use_webhooks=env.bool("USE_WEBHOOKS"),
         ),
         db=DbConfig(
             database=env.str('DB_NAME')
