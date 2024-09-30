@@ -1,2 +1,1 @@
 from .money_tracker_callback import MoneyTrackerCallbackData
-from .common_data import CommonCallbackData

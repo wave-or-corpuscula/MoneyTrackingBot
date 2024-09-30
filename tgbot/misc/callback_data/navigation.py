@@ -9,5 +9,3 @@ class NavigationActions(Enum):
 
 class NavigationCbData(CallbackData, prefix="navigation"):
     navigation : NavigationActions
-
-# MoneyTrackerCallbackData.BACK

@@ -63,3 +63,33 @@ class Database:
     @staticmethod
     def get_user_spending_types(user_id: int) -> ModelSelect:
         return SpendingType.select().where((SpendingType.user_id == user_id))
+
+    @staticmethod
+    def get_spending_type_name(user_id: int, type_id: int) -> str:
+        return (SpendingType
+                .select(SpendingType.type_name)
+                .where(SpendingType.user_id == user_id, SpendingType.id == type_id)
+                .scalar())
+    
+    def add_spending_type(self, user_id: int, type_name: str):
+        try:
+            SpendingType.create(user_id=user_id, type_name=type_name)
+            logging.info(f"DB User with id: {user_id} created new type: {type_name}")
+        except Exception as e:
+            logging.error(f"Error while adding new type user: {user_id}. \nError: {e}")
+
+    def delete_spending_type(self, type_id: int):
+        # TODO: Сделать все траты удаленного типа типа Другое
+        try:
+            SpendingType.delete().where(SpendingType.id == type_id).execute()
+            logging.info(f"DB Spending type with id: {type_id} deleted")
+        except Exception as e:
+            logging.error(f"Error while deleting type id {type_id}. \nError: {e}")
+    
+    def update_spending_type(self, type_id: int, new_name: str):
+        try:
+            SpendingType.update({SpendingType.type_name: new_name}).where(SpendingType.id == type_id).execute()
+            logging.info(f"DB Spending type with id: {type_id} updated to {new_name}")
+        except Exception as e:
+            logging.error(f"Error while updating type id {type_id}. \nError: {e}")
+
