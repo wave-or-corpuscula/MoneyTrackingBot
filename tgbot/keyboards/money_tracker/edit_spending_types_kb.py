@@ -25,7 +25,9 @@ edit_spending_type_list = [
         InlineKeyboardButton(text="✏️", callback_data=EditSpendingTypeCbData(action=EditSpendingTypeActions.edit).pack()),
         InlineKeyboardButton(text="❌", callback_data=EditSpendingTypeCbData(action=EditSpendingTypeActions.delete).pack()),
     ],
-    [InlineKeyboardButton(text="↩️ Назад", callback_data=NavigationCbData(navigation=NavigationActions.back).pack())]
+    [
+        InlineKeyboardButton(text="↩️ Назад", callback_data=NavigationCbData(navigation=NavigationActions.back).pack())
+    ]
 ]
 
 builder = InlineKeyboardBuilder(markup=edit_spending_type_list)

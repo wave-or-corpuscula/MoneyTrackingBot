@@ -32,4 +32,5 @@ class Spending(BaseModel):
     user_id = ForeignKeyField(User, backref='spendings', on_delete='CASCADE', on_update='CASCADE')
     spending_type_id = ForeignKeyField(SpendingType, backref='spendings', on_delete='CASCADE', on_update='CASCADE')
     spending = FloatField()
+    description = CharField(null=True, default=None)
     spending_date = DateTimeField(default=datetime.datetime.now)

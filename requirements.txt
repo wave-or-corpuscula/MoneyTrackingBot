@@ -3,3 +3,4 @@ environs==11.0.0
 nest-asyncio==1.6.0
 peewee==3.17.6
 redis==5.0.8
+openpyxl==3.1.5

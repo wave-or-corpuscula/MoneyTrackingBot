@@ -32,10 +32,10 @@ class Database:
         except Exception as e:
             logging.error(f"Error adding user {full_name}, id {user_id}. \nError: {e}")
         
-    def add_spending(self, user_id: int, spending_type_id: int, spending: float):
+    def add_spending(self, user_id: int, spending_type_id: int, spending: float, description: str = None):
         try:
-            Spending.create(user_id=user_id, spending_type_id=spending_type_id, spending=spending)
-            logging.info(f"DB spending for user {user_id} created")
+            Spending.create(user_id=user_id, spending_type_id=spending_type_id, spending=spending, description=description)
+            logging.info(f"DB User: {user_id}, created spending: {spending} with text: {description}")
         except Exception as e:
             logging.error(f"Cannot create spending {spending} for user {user_id}. \nError: {e}")
 
@@ -79,10 +79,10 @@ class Database:
             logging.error(f"Error while adding new type user: {user_id}. \nError: {e}")
 
     def delete_spending_type(self, type_id: int):
-        # TODO: Сделать все траты удаленного типа типа Другое
         try:
             SpendingType.delete().where(SpendingType.id == type_id).execute()
-            logging.info(f"DB Spending type with id: {type_id} deleted")
+            spendings_amount = Spending.delete().where(Spending.spending_type_id == type_id).execute()
+            logging.info(f"DB Spending type with id: {type_id} with {spendings_amount} spendings deleted")
         except Exception as e:
             logging.error(f"Error while deleting type id {type_id}. \nError: {e}")
     
@@ -92,4 +92,8 @@ class Database:
             logging.info(f"DB Spending type with id: {type_id} updated to {new_name}")
         except Exception as e:
             logging.error(f"Error while updating type id {type_id}. \nError: {e}")
+
+    @staticmethod
+    def get_user_spending_types_amount(user_id: int):
+        return SpendingType.select().where(SpendingType.user_id == user_id).count()
 

@@ -13,3 +13,4 @@ class MoneyTrackerStates(StatesGroup):
     spending_type_edit_choosed = State()
     spending_type_enter_new = State()
     spending_type_edit_enter_new = State()
+    spending_type_deleting_confirm = State()

@@ -51,7 +51,7 @@ async def main():
 
     nest_asyncio.apply()
     logging.basicConfig(level=logging.INFO)
-    config = load_config(".env")
+    config : Config = load_config(".env")
 
     if config.tg_bot.use_redis:
         pass
@@ -63,6 +63,7 @@ async def main():
     db = Database(config, default_spending_types=["Еда", "Развлечения", "Здоровье", "Другое"])
 
     dp["db"] = db
+    dp["config"] = config
 
     dp.include_routers(*routers)
 

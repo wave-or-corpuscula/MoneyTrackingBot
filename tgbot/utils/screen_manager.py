@@ -1,6 +1,7 @@
 import logging
 
 from aiogram.types import InlineKeyboardMarkup, Message
+from aiogram.utils.formatting import Text, Underline
 
 from tgbot.utils import Database
 
@@ -11,6 +12,7 @@ from tgbot.keyboards.money_tracker.spending_types_kb import build_spending_types
 from tgbot.keyboards.money_tracker.menu_kb import money_tracker_menu_kb
 from tgbot.keyboards.money_tracker.statistics_kb import statistics_kb
 from tgbot.keyboards.money_tracker.settings_menu_kb import settings_menu_kb
+from tgbot.keyboards.money_tracker.confirm_deleting_kb import confirm_deleting_kb
 
 
 class Screen:
@@ -43,23 +45,22 @@ def spending_successful_added_text(user_spending: str,  spending_type_id: int, m
     logging.info(f"User: {message.from_user.full_name} added spending {user_spending}")
 
     text = [
-        "<b>Отслеживание трат</b>\n",
-        f"<i>Трата <u>{user_spending}</u> успешно добавлена!</i>"
+        "<b>Отслеживание трат</b>\n<i>Трата <u>{user_spending}</u> успешно добавлена!</i>"
     ]
 
     return "\n".join(text)
 
-# TODO: Сделать крутой вывод, чтобы пользователь не мог фигню всякую ввести и сломать все нафиг
 def editing_spending_type_text(user_id: int, type_id: int):
     type_name = Database.get_spending_type_name(user_id=user_id, type_id=type_id)
+    underline_type_name = Text(Underline(type_name)).as_html()
     text = [
-        "Редактирование типа:",
-        f"{type_name}\n",
+        f"Тип: {underline_type_name}\n",
         "Выберите:",
-        "✏️ - изменить",
+        "✏️ - изменить имя типа",
         "❌ - удалить",
     ]
     return "\n".join(text)
+    # return content.as_kwargs()
 
 
 class ScreenManager:
@@ -82,7 +83,7 @@ class ScreenManager:
     )
 
     SPENDING_SUCCSESSFUL_ADDED = Screen(
-        text=spending_successful_added_text,
+        text=lambda spending: f"<i>Трата <u>{spending}</u> успешно добавлена!</i>\n\n<b>Отслеживание трат</b>",
         reply_markup=money_tracker_menu_kb
     )
 
@@ -92,7 +93,7 @@ class ScreenManager:
     )
 
     ENTER_SPENDING_INVALID = Screen(
-        text="<b>Трата должна быть целым или десятичным положительным числом!</b>\n\nВведите размер траты:",
+        text="<b>Трата должна быть целым или десятичным положительным числом!</b>\n\nВведите размер траты:", # TODO: Формат с описанием
         reply_markup=back_kb
     )
 
@@ -121,14 +122,19 @@ class ScreenManager:
         reply_markup=back_kb
     )
 
+    ENTER_INVALID_SPENDING_TYPE = Screen(
+        text=lambda max_len: f"<b>Длина должна быть меньше {max_len} символов</b>\n<i>Некоторые emoji занимают 2 символа</i>\n\nВведите название типа трат:",
+        reply_markup=back_kb
+    )
+
     NEW_SPENDING_TYPE_ADDED = Screen(
-        text="<b>Новый тип трат добавлен</b>\n\nВыберите настройку:",
-        reply_markup=settings_menu_kb
+        text="<b>Новый тип трат добавлен</b>\n\nВыберие тип для изменения:",
+        reply_markup=build_spending_types_for_edit_kb
     )
 
     SPENDING_TYPE_DELETED = Screen(
-        text="<b>Выбранный тип удален</b>\n\nВыберите настройку:",
-        reply_markup=settings_menu_kb
+        text="<b>Выбранный тип удален</b>\n\nВыберие тип для изменения:",
+        reply_markup=build_spending_types_for_edit_kb
     )
 
     EDIT_SPENDING_TYPE_NAME = Screen(
@@ -137,6 +143,16 @@ class ScreenManager:
     )
 
     SPENDING_TYPE_NAME_EDITED = Screen(
-        text="<b>Тип трат изменен</b>\n\nВыберите настройку:",
-        reply_markup=settings_menu_kb
+        text="<b>Тип трат изменен</b>\n\nВыберие тип для изменения:",
+        reply_markup=build_spending_types_for_edit_kb
+    )
+
+    CONFIRM_DELETING_SPENDING_TYPE = Screen(
+        text="Вы точно хотите удалить выбранный тип?\n\n<b><u>Все траты этого типа будут удалены</u></b>",
+        reply_markup=confirm_deleting_kb
+    )
+
+    MAX_SPENDING_TYPES_ALERT = Screen(
+        text=lambda max_types : f"Максимальное количество типов трат - {max_types}",
+        reply_markup=None
     )

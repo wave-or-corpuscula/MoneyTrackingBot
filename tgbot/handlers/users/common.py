@@ -4,7 +4,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.formatting import Text, Bold, as_list, Italic
 
-from tgbot.states import MainMenuStates
+from tgbot.states import MainMenuStates, MoneyTrackerStates
 from tgbot.utils import Database, ScreenManager
 
 
@@ -14,8 +14,8 @@ common_router = Router(name=__name__)
 @common_router.message(Command("start"), StateFilter(None))
 async def command_start(message: Message, state: FSMContext, db: Database):
     db.add_user(message.from_user.id, message.from_user.full_name)
-    await state.set_state(MainMenuStates.choosing_service)
-    await message.answer(**ScreenManager.START_SCREEN.as_kwargs())
+    await state.set_state(MoneyTrackerStates.choosing_service)
+    await message.answer(**ScreenManager.MONEY_TRACKER_MENU.as_kwargs())
 
 # Продвинутое решение работы с пользовательским именем (ни и вообще, если нужно вывести то, что ввел пользователь)
 @common_router.message(Command("hello"), StateFilter("*"))
@@ -30,7 +30,7 @@ async def greet_user(message: Message):
 # --- ECHO HANDLERS --- #
 
 @common_router.message(StateFilter(None))
-async def bot_echo(message: Message, state: FSMContext):
+async def bot_echo(message: Message):
     content = as_list(
         Italic("Эхо без состояния"),
         "Сообщение:",
