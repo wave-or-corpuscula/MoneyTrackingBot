@@ -1,3 +1,3 @@
 from .max_spending_types_amount_filter import MaxSpendingTypesAmountFilter
 from .validate_type_name_filter import ValidateTypeNameFilter
-from .spending_filter import SpendingFilter
+from .valid_spending_filter import ValidSpendingFilter

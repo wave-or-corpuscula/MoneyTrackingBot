@@ -96,4 +96,10 @@ class Database:
     @staticmethod
     def get_user_spending_types_amount(user_id: int):
         return SpendingType.select().where(SpendingType.user_id == user_id).count()
-
+    
+    @staticmethod
+    def get_user_spendings(user_id: int) -> list[Spending]:
+        spendings : list[Spending] = (Spending.select(SpendingType.type_name, Spending.spending, Spending.description, Spending.spending_date)
+                                      .where(Spending.user_id == user_id)
+                                      .join(SpendingType, on=(Spending.spending_type_id == SpendingType.id)))
+        return spendings

@@ -88,12 +88,12 @@ class ScreenManager:
     )
 
     ENTER_SPENDING = Screen(
-        text="Введите вашу трату:",
+        text="<u>Формат ввода траты:</u>\n<i>10.99 [описание] (необязательно)</i>\n\nВведите вашу трату:",
         reply_markup=back_kb
     )
 
     ENTER_SPENDING_INVALID = Screen(
-        text="<b>Трата должна быть целым или десятичным положительным числом!</b>\n\nВведите размер траты:", # TODO: Формат с описанием
+        text="<b>Трата должна быть десятичным положительным числом!</b>\n<i>После траты через пробел так же можете ввести ее описание</i>\n\nВведите размер траты:",
         reply_markup=back_kb
     )
 
@@ -154,5 +154,10 @@ class ScreenManager:
 
     MAX_SPENDING_TYPES_ALERT = Screen(
         text=lambda max_types : f"Максимальное количество типов трат - {max_types}",
+        reply_markup=None
+    )
+
+    REPORT_FORMING = Screen(
+        text="Формирование отчета...",
         reply_markup=None
     )
