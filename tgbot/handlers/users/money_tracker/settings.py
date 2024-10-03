@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 from aiogram.utils.formatting import as_list, Italic
 
-from tgbot.states import MainMenuStates, MoneyTrackerStates
+from tgbot.states import MoneyTrackerStates
 from tgbot.misc.callback_data.navigation import NavigationActions, NavigationCbData
 
 from tgbot.utils import ScreenManager

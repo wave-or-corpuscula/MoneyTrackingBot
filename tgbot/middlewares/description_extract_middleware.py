@@ -14,7 +14,7 @@ class DescriptionExtractMiddleware(BaseMiddleware):
     ) -> Any:
         try:
             spending_parts = event.text.split(" ")
-            data["spending"] = round(float(spending_parts[0]), 2)
+            data["spending"] = round(float(spending_parts[0].replace(",", ".")), 2)
             description = " ".join(spending_parts[1:])
             data["description"] = None if len(description) == 0 else description
         finally:

@@ -10,9 +10,5 @@ routers = [
     settings_router,
     edit_spending_types_router,
 
-    # Habits tracker routers
-
-    habits_tracker_router,
-
     common_router,
 ]

@@ -1,2 +1,1 @@
-from .main_menu_states import MainMenuStates
 from .money_tracker_states import MoneyTrackerStates
