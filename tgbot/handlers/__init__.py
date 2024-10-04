@@ -9,6 +9,7 @@ routers = [
     statistics_router,
     settings_router,
     edit_spending_types_router,
+    spendings_pagination_router,
 
     common_router,
 ]

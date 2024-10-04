@@ -9,6 +9,7 @@ from tgbot.misc.callback_data.navigation import NavigationCbData, NavigationActi
 
 class MTSettingsMenuActions(Enum):
     spending_types = "spending_types"
+    edit_spendings = "edit_spendings"
 
 
 class MTSettingsMenuCbData(CallbackData, prefix="mt_settings_menu"):
@@ -16,7 +17,8 @@ class MTSettingsMenuCbData(CallbackData, prefix="mt_settings_menu"):
 
 
 settings_menu_list = [
-    [InlineKeyboardButton(text="🖋️ Изменить типы трат", callback_data=MTSettingsMenuCbData(action=MTSettingsMenuActions.spending_types).pack())],
+    [InlineKeyboardButton(text="🖋️ Изменить категории", callback_data=MTSettingsMenuCbData(action=MTSettingsMenuActions.spending_types).pack())],
+    [InlineKeyboardButton(text="✏️ Редактировать траты", callback_data=MTSettingsMenuCbData(action=MTSettingsMenuActions.edit_spendings).pack())],
     [InlineKeyboardButton(text="↩️ Назад", callback_data=NavigationCbData(navigation=NavigationActions.back).pack())],
 ]
 

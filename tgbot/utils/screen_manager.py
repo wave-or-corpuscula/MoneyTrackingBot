@@ -3,6 +3,8 @@ import logging
 from aiogram.types import InlineKeyboardMarkup, Message
 from aiogram.utils.formatting import Text, Underline
 
+from tgbot.models import Spending
+
 from tgbot.utils import Database
 
 from tgbot.keyboards import *
@@ -12,6 +14,7 @@ from tgbot.keyboards.money_tracker.menu_kb import money_tracker_menu_kb
 from tgbot.keyboards.money_tracker.statistics_kb import statistics_kb
 from tgbot.keyboards.money_tracker.settings_menu_kb import settings_menu_kb
 from tgbot.keyboards.money_tracker.confirm_deleting_kb import confirm_deleting_kb
+from tgbot.keyboards.money_tracker.spendings_pagination_kb import spendings_pagination_kb
 
 
 class Screen:
@@ -72,6 +75,18 @@ def about_text():
 
 По вопросам и предложениям можно обращаться к @wave_or_corpuscula
 """
+
+def spendings_page_text(cur: int, total: int, spending: Spending):
+    content = [
+        f"<b>Трата: {cur} из {total}</b>\n",
+        f"<i>Дата: {spending.spending_date}</i>\n",
+        f"Сумма: {spending.spending}",
+    ]
+
+    if spending.description:
+        desc = Text(spending.description).as_html()
+        content.append(f"Описание: {desc}")
+    return "\n".join(content)
 
 
 class ScreenManager:
@@ -176,4 +191,14 @@ class ScreenManager:
     NO_SPENDING_TYPES_AVALIABLE = Screen(
         text="Вы не можете добавить новую трату, так как у вас нет типов трат!\n\nДля добавления типа траты перейдите в \nНастойки->Изменить типы трат->Новый тип",
         reply_markup=None
+    )
+
+    SPENDINGS_PAGINATION = Screen(
+        text=spendings_page_text,
+        reply_markup=spendings_pagination_kb
+    )
+
+    ENTER_GOTO_PAGE = Screen(
+        text=lambda spendings_amount: f"Введите номер траты\n<i>Между 1 и {spendings_amount}</i>:",
+        reply_markup=back_kb
     )

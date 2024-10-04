@@ -103,3 +103,12 @@ class Database:
                                       .where(Spending.user_id == user_id)
                                       .join(SpendingType, on=(Spending.spending_type_id == SpendingType.id)))
         return spendings
+
+    @staticmethod
+    def get_spendings_ids(user_id: int) -> list[int]:
+        spendings = Spending.select(Spending.id).where(Spending.user_id == user_id)
+        return [spending.id for spending in spendings]
+    
+    @staticmethod
+    def get_user_spending(spending_id: int) -> Spending:
+        return Spending.get(spending_id)
