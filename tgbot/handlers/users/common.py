@@ -4,12 +4,14 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.formatting import Text, Bold, as_list, Italic
 
-from tgbot.states import MainMenuStates, MoneyTrackerStates
+from tgbot.states import MoneyTrackerStates
 from tgbot.utils import Database, ScreenManager
 
 
 common_router = Router(name=__name__)
 
+# TODO: Сделать пагинацию по тратам пользователя с возможностью изменить данные траты
+# TODO: Поменять Тип траты на Категорию
 
 @common_router.message(Command("start"), StateFilter(None))
 async def command_start(message: Message, state: FSMContext, db: Database):

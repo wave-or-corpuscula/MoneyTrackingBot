@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
 
 from tgbot.utils import Database, Multitool, ScreenManager
-from tgbot.states import MainMenuStates, MoneyTrackerStates
+from tgbot.states import MoneyTrackerStates
 from tgbot.misc.callback_data.navigation import NavigationActions, NavigationCbData
 
 from tgbot.keyboards.money_tracker.statistics_kb import MTStatisticsActions, MTStatisticsCbData

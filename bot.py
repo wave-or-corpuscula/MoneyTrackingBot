@@ -60,10 +60,11 @@ async def main():
         storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
-    db = Database(config, default_spending_types=["Еда", "Развлечения", "Здоровье", "Другое"])
+    db = Database(config, default_spending_types=["🥦 Еда", "🎉 Развлечения", "💪 Здоровье", "🙈 Другое"])
 
     dp["db"] = db
     dp["config"] = config
+
 
     dp.include_routers(*routers)
 

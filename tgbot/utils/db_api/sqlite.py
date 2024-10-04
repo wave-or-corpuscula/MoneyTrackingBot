@@ -94,7 +94,7 @@ class Database:
             logging.error(f"Error while updating type id {type_id}. \nError: {e}")
 
     @staticmethod
-    def get_user_spending_types_amount(user_id: int):
+    def get_user_spending_types_amount(user_id: int) -> int:
         return SpendingType.select().where(SpendingType.user_id == user_id).count()
     
     @staticmethod
@@ -103,3 +103,12 @@ class Database:
                                       .where(Spending.user_id == user_id)
                                       .join(SpendingType, on=(Spending.spending_type_id == SpendingType.id)))
         return spendings
+
+    @staticmethod
+    def get_spendings_ids(user_id: int) -> list[int]:
+        spendings = Spending.select(Spending.id).where(Spending.user_id == user_id)
+        return [spending.id for spending in spendings]
+    
+    @staticmethod
+    def get_user_spending(spending_id: int) -> Spending:
+        return Spending.get(spending_id)
