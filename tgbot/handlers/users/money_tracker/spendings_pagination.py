@@ -79,14 +79,13 @@ async def entered_goto_spending(message: Message, state: FSMContext, bot: Bot):
     message_id = state_data.get("spending_message_id")
     goto_element_number = int(message.text)
     if goto_element_number <= len(spending_ids):
+        await state.set_state(MoneyTrackerStates.spendings_pagination)
         await goto_spending_by_id(chat_id=message.chat.id, message_id=message_id, bot=bot, spending_ids=spending_ids, cur_index=goto_element_number - 1)
     # TODO: Обработать большой индекс
     await message.delete()
 
 
 # --- Навигация по тратам --- #
-
-
 
 
 async def offset_spendings(offset: int, state: FSMContext, message: Message):
