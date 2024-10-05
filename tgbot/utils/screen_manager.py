@@ -70,7 +70,7 @@ def about_text():
 Данный бот создан для отслеживания своих финансовых трат.
 
 <i>Тратой</i> я называю уменьшение личного капитала в связи с преобретением каких-либо благ (сам понял, что сказал?).
-<i>Тип траты</i> - это широкая категория, под которую можно подвести данную трату.
+<i>Категория</i> траты - это обобщенная область, под которую можно подвести данную трату.
 
 В пункте меню <b>Статистика</b> можно посмотреть траты за текущие месяц и неделю. Если вы хотите получить отчет за все время, выберите пункт <b>Полный отчет</b>.
 
@@ -130,7 +130,7 @@ class ScreenManager:
     )
 
     SPENDING_TYPE_CHOOSING = Screen(
-        text="Выберите тип траты:",
+        text="Выберите категорию траты:",
         reply_markup=build_spending_types_kb
     )
 
@@ -155,7 +155,7 @@ class ScreenManager:
     )
 
     SETTINGS_EDIT_SPENDING_TYPES_LIST = Screen(
-        text="Выберие тип для изменения:",
+        text="Выберие категорию для изменения:",
         reply_markup=build_spending_types_for_edit_kb
     )
 
@@ -170,7 +170,7 @@ class ScreenManager:
     )
 
     ENTER_NEW_SPENDING_TYPE = Screen(
-        text="Введите новый тип трат:",
+        text="Введите называние новой категории:",
         reply_markup=back_kb
     )
 
@@ -180,12 +180,12 @@ class ScreenManager:
     )
 
     NEW_SPENDING_TYPE_ADDED = Screen(
-        text="<b>Новый тип трат добавлен</b>\n\nВыберие тип для изменения:",
+        text="<b>Новая категория добавлена</b>\n\nВыберие категорию для изменения:",
         reply_markup=build_spending_types_for_edit_kb
     )
 
     SPENDING_TYPE_DELETED = Screen(
-        text="<b>Выбранный тип удален</b>\n\nВыберие тип для изменения:",
+        text="<b>Выбранная категория удалена</b>\n\nВыберие категорию для изменения:",
         reply_markup=build_spending_types_for_edit_kb
     )
 
@@ -195,7 +195,7 @@ class ScreenManager:
     )
 
     SPENDING_TYPE_NAME_EDITED = Screen(
-        text="<b>Тип трат изменен</b>\n\nВыберие тип для изменения:",
+        text="<b>Категория изменена</b>\n\nВыберие категорию для изменения:",
         reply_markup=build_spending_types_for_edit_kb
     )
 
