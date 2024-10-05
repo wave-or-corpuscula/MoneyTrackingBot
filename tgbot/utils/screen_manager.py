@@ -80,12 +80,12 @@ def spendings_page_text(cur: int, total: int, spending: Spending):
     content = [
         f"<b>Трата: {cur} из {total}</b>\n",
         f"<i>Дата: {spending.spending_date}</i>\n",
-        f"Сумма: {spending.spending}",
+        f"<u>Сумма</u>: {spending.spending}",
     ]
 
     if spending.description:
         desc = Text(spending.description).as_html()
-        content.append(f"Описание: {desc}")
+        content.append(f"<u>Описание</u>: {desc}")
     return "\n".join(content)
 
 
@@ -200,5 +200,10 @@ class ScreenManager:
 
     ENTER_GOTO_PAGE = Screen(
         text=lambda spendings_amount: f"Введите номер траты\n<i>Между 1 и {spendings_amount}</i>:",
+        reply_markup=back_kb
+    )
+
+    INVALID_ENTER_GOTO_PAGE = Screen(
+        text=lambda spendings_amount: f"<b><u>Число должно быть между 1 и {spendings_amount}</u></b>\n\nВведите номер траты:",
         reply_markup=back_kb
     )

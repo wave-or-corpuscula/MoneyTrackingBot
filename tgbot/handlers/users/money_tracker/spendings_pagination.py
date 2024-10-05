@@ -80,9 +80,29 @@ async def entered_goto_spending(message: Message, state: FSMContext, bot: Bot):
     goto_element_number = int(message.text)
     if goto_element_number <= len(spending_ids):
         await state.set_state(MoneyTrackerStates.spendings_pagination)
-        await goto_spending_by_id(chat_id=message.chat.id, message_id=message_id, bot=bot, spending_ids=spending_ids, cur_index=goto_element_number - 1)
-    # TODO: Обработать большой индекс
-    await message.delete()
+        await goto_spending_by_id(chat_id=message.chat.id, 
+                                  message_id=message_id, 
+                                  bot=bot, 
+                                  spending_ids=spending_ids, 
+                                  cur_index=goto_element_number - 1)
+        await message.delete()
+    else:
+        # TODO: Обработать большой индекс
+        await entered_invalid_goto_spending(message, state, bot)
+
+@spendings_pagination_router.message(
+    StateFilter(MoneyTrackerStates.enter_spending_page)
+)
+async def entered_invalid_goto_spending(message: Message, state: FSMContext, bot: Bot):
+    state_data = await state.get_data()
+    spending_len = len(state_data.get("spending_ids"))
+    message_id = state_data.get("spending_message_id")
+    try:
+        await bot.edit_message_text(chat_id=message.chat.id, 
+                                    message_id=message_id, 
+                                    **ScreenManager.INVALID_ENTER_GOTO_PAGE.as_kwargs(spendings_amount=spending_len))
+    finally:
+        await message.delete()
 
 
 # --- Навигация по тратам --- #
