@@ -17,8 +17,12 @@ class MoneyTrackerStates(StatesGroup):
     spending_type_edit_enter_new = State()
     spending_type_deleting_confirm = State()
 
+    # --- Spendings pagination --- #
+
     spendings_pagination = State()
     enter_spending_page = State()
+    editing_spending = State()
+    enter_new_spending_price = State()
 
     
 

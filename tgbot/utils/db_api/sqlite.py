@@ -118,3 +118,7 @@ class Database:
     @staticmethod
     def delete_user_spending(spending_id: int) -> None:
         Spending.delete().where(Spending.id == spending_id).execute()
+
+    @staticmethod
+    def update_spending_price(spending_id: int, new_price: float):
+        Spending.update({Spending.spending: new_price}).where(Spending.id == spending_id).execute()

@@ -3,9 +3,9 @@ import logging
 from aiogram.types import InlineKeyboardMarkup, Message
 from aiogram.utils.formatting import Text, Underline
 
-from tgbot.models import Spending
-
 from tgbot.utils import Database
+
+from tgbot.models import Spending
 
 from tgbot.keyboards import *
 from tgbot.keyboards.money_tracker.edit_spending_types_kb import build_spending_types_for_edit_kb, edit_spending_type_kb
@@ -15,6 +15,7 @@ from tgbot.keyboards.money_tracker.statistics_kb import statistics_kb
 from tgbot.keyboards.money_tracker.settings_menu_kb import settings_menu_kb
 from tgbot.keyboards.money_tracker.confirm_deleting_kb import confirm_deleting_kb
 from tgbot.keyboards.money_tracker.spendings_pagination_kb import spendings_pagination_kb
+from tgbot.keyboards.money_tracker.edit_spending_kb import edit_spending_kb
 
 
 class Screen:
@@ -88,6 +89,24 @@ def spendings_page_text(cur: int, total: int, spending: Spending):
         desc = Text(spending.description).as_html()
         content.append(f"<u>Описание</u>: {desc}")
     return "\n".join(content)
+
+def edit_spending_text(spending: Spending):
+    content = [
+        "<b>Трата:</b>\n",
+        f"<i>Категория:</i> {spending.spending_type_id.type_name}",
+        f"<i>Дата: {spending.spending_date}</i>\n",
+        f"<u>Сумма</u>: {spending.spending}",
+    ]
+
+    if spending.description:
+        desc = Text(spending.description).as_html()
+        content.append(f"<u>Описание</u>: {desc}")
+    content.append("\n<i>Выберите параметр для изменения:</i>")
+    return "\n".join(content)
+
+
+def enter_valid_spending_price_text(spending: Spending):
+    return "<b>Сумма изменена</b>\n" + edit_spending_text(spending)
 
 
 class ScreenManager:
@@ -206,5 +225,25 @@ class ScreenManager:
 
     INVALID_ENTER_GOTO_PAGE = Screen(
         text=lambda spendings_amount: f"<b><u>Число должно быть между 1 и {spendings_amount}</u></b>\n\nВведите номер траты:",
+        reply_markup=back_kb
+    )
+
+    EDIT_SPENDING_OPTIONS = Screen(
+        text=edit_spending_text,
+        reply_markup=edit_spending_kb
+    )
+
+    ENTER_EDIT_SPENDING_PRICE = Screen(
+        text="Введите новую сумму:",
+        reply_markup=back_kb
+    )
+
+    ENTER_VALID_SPENDING_PRICE = Screen(
+        text=enter_valid_spending_price_text,
+        reply_markup=edit_spending_kb
+    )
+
+    ENTER_INVALID_SPENDING_PRICE = Screen(
+        text="<b>Трата должна быть десятичным положительным числом!</b>\nВведите новую сумму:",
         reply_markup=back_kb
     )
