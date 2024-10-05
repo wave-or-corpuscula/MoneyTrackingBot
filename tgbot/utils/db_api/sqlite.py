@@ -122,3 +122,7 @@ class Database:
     @staticmethod
     def update_spending_price(spending_id: int, new_price: float):
         Spending.update({Spending.spending: new_price}).where(Spending.id == spending_id).execute()
+
+    @staticmethod
+    def update_spending_description(spending_id: int, new_description: str):
+        Spending.update({Spending.description: new_description}).where(Spending.id == spending_id).execute()

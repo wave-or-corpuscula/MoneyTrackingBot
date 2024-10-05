@@ -23,6 +23,7 @@ class MoneyTrackerStates(StatesGroup):
     enter_spending_page = State()
     editing_spending = State()
     enter_new_spending_price = State()
+    enter_new_description = State()
 
     
 

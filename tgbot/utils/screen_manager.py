@@ -93,20 +93,24 @@ def spendings_page_text(cur: int, total: int, spending: Spending):
 def edit_spending_text(spending: Spending):
     content = [
         "<b>Трата:</b>\n",
-        f"<i>Категория:</i> {spending.spending_type_id.type_name}",
+        f"<b>Категория:</b> {spending.spending_type_id.type_name}",
         f"<i>Дата: {spending.spending_date}</i>\n",
-        f"<u>Сумма</u>: {spending.spending}",
+        f"<b>Сумма</b>: <u>{spending.spending}</u>",
     ]
 
     if spending.description:
         desc = Text(spending.description).as_html()
-        content.append(f"<u>Описание</u>: {desc}")
+        content.append(f"<b>Описание:</b> <u>{desc}</u>")
     content.append("\n<i>Выберите параметр для изменения:</i>")
     return "\n".join(content)
 
 
 def enter_valid_spending_price_text(spending: Spending):
     return "<b>Сумма изменена</b>\n" + edit_spending_text(spending)
+
+
+def enter_valid_spending_description_text(spending: Spending):
+    return "<b>Описание изменено</b>\n" + edit_spending_text(spending)
 
 
 class ScreenManager:
@@ -246,4 +250,14 @@ class ScreenManager:
     ENTER_INVALID_SPENDING_PRICE = Screen(
         text="<b>Трата должна быть десятичным положительным числом!</b>\nВведите новую сумму:",
         reply_markup=back_kb
+    )
+
+    ENTER_NEW_DESCRIPTION = Screen(
+        text="Введите новый текст описания:",
+        reply_markup=back_kb
+    )
+
+    ENTER_VALID_DESCRIPTION = Screen(
+        text=enter_valid_spending_description_text,
+        reply_markup=edit_spending_kb
     )

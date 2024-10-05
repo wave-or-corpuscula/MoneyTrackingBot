@@ -211,6 +211,48 @@ async def enter_invalid_spending_price(message: Message, state: FSMContext, bot:
 
 # -- Ввод новой суммы -- #
 
+# -- Ввод нового описания -- #
+
+@spendings_pagination_router.callback_query(
+    StateFilter(MoneyTrackerStates.editing_spending),
+    EditSpendingCbData.filter(F.action == EditSpendingActions.edit_spending_description)
+)
+async def edit_description_option(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(MoneyTrackerStates.enter_new_description)
+    await state.update_data({"message_id": callback.message.message_id})
+    await callback.message.edit_text(**ScreenManager.ENTER_NEW_DESCRIPTION.as_kwargs())
+
+# Отмена
+@spendings_pagination_router.callback_query(
+    StateFilter(MoneyTrackerStates.enter_new_description),
+    NavigationCbData.filter(F.navigation == NavigationActions.back)
+)
+async def cancel_edit_description_option(callback: CallbackQuery, state: FSMContext):
+    await spending_settings_menu_show(callback, state)
+
+@spendings_pagination_router.message(
+    F.content_type == ContentType.TEXT,
+    StateFilter(MoneyTrackerStates.enter_new_description)
+)
+async def enter_new_description(message: Message, state: FSMContext, bot: Bot):
+    data = await state.get_data()
+    message_id = data.get("message_id")
+    cur_index = data.get("current_index")
+    spending_ids = data.get("spending_ids")
+
+    Database.update_spending_description(spending_ids[cur_index], message.text)
+    
+    cur_spending = await get_cur_spending(state)
+    await state.set_state(MoneyTrackerStates.editing_spending)
+    await bot.edit_message_text(chat_id=message.chat.id, 
+                                message_id=message_id, 
+                                **ScreenManager.ENTER_VALID_DESCRIPTION.as_kwargs(spending=cur_spending))
+    await message.delete()
+
+
+
+# -- Ввод нового описания -- #
+
 
 # --- Изменение траты --- #
 
