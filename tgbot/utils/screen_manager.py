@@ -112,6 +112,8 @@ def enter_valid_spending_price_text(spending: Spending):
 def enter_valid_spending_description_text(spending: Spending):
     return "<b>Описание изменено</b>\n" + edit_spending_text(spending)
 
+def enter_valid_spending_spending_type_text(spending: Spending):
+    return "<b>Категория изменена</b>\n" + edit_spending_text(spending)
 
 class ScreenManager:
     
@@ -259,5 +261,15 @@ class ScreenManager:
 
     ENTER_VALID_DESCRIPTION = Screen(
         text=enter_valid_spending_description_text,
+        reply_markup=edit_spending_kb
+    )
+
+    EDIT_SPENDING_SPENDING_TYPE = Screen(
+        text="Выберите новую категорию для своей траты:", 
+        reply_markup=build_spending_types_kb
+    )
+
+    ENTER_VALID_SPENDING_SPENDING_TYPE = Screen(
+        text=enter_valid_spending_spending_type_text,
         reply_markup=edit_spending_kb
     )

@@ -12,8 +12,9 @@ from tgbot.filters import ValidIntegerFilter, ValidSpendingPriceFilter
 from tgbot.utils import ScreenManager, Database
 from tgbot.states import MoneyTrackerStates
 from tgbot.misc.callback_data.navigation import NavigationActions, NavigationCbData
-from tgbot.keyboards.money_tracker.spendings_pagination_kb import PaginationActions, PaginationCbData
 from tgbot.keyboards.money_tracker.edit_spending_kb import EditSpendingActions, EditSpendingCbData
+from tgbot.keyboards.money_tracker.spending_types_kb import SpendingTypesCbData
+from tgbot.keyboards.money_tracker.spendings_pagination_kb import PaginationActions, PaginationCbData
 
 
 spendings_pagination_router = Router(name=__name__)
@@ -249,9 +250,43 @@ async def enter_new_description(message: Message, state: FSMContext, bot: Bot):
                                 **ScreenManager.ENTER_VALID_DESCRIPTION.as_kwargs(spending=cur_spending))
     await message.delete()
 
-
-
 # -- Ввод нового описания -- #
+
+# -- Изменение категории -- #
+
+@spendings_pagination_router.callback_query(
+    StateFilter(MoneyTrackerStates.editing_spending),
+    EditSpendingCbData.filter(F.action == EditSpendingActions.edit_spending_type)
+)
+async def edit_spending_spending_type_option(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(MoneyTrackerStates.enter_new_spending_type)
+    await callback.message.edit_text(**ScreenManager.EDIT_SPENDING_SPENDING_TYPE.as_kwargs(user_id=callback.from_user.id))
+
+# Отмена
+@spendings_pagination_router.callback_query(
+    StateFilter(MoneyTrackerStates.enter_new_spending_type),
+    NavigationCbData.filter(F.navigation == NavigationActions.back)
+)
+async def cancel_edit_description_option(callback: CallbackQuery, state: FSMContext):
+    await spending_settings_menu_show(callback, state)
+
+
+@spendings_pagination_router.callback_query(
+    StateFilter(MoneyTrackerStates.enter_new_spending_type),
+    SpendingTypesCbData.filter()
+)
+async def enter_new_spending_spending_type(callback: CallbackQuery, state: FSMContext, callback_data: SpendingTypesCbData):
+    data = await state.get_data()
+    cur_index = data.get("current_index")
+    spending_ids = data.get("spending_ids")
+    
+    Database.update_spending_spending_type(spending_ids[cur_index], callback_data.type_id)
+
+    cur_spending = await get_cur_spending(state)
+    await state.set_state(MoneyTrackerStates.editing_spending)
+    await callback.message.edit_text(**ScreenManager.ENTER_VALID_SPENDING_SPENDING_TYPE.as_kwargs(spending=cur_spending))
+
+# -- Изменение категории -- #
 
 
 # --- Изменение траты --- #

@@ -24,6 +24,7 @@ class MoneyTrackerStates(StatesGroup):
     editing_spending = State()
     enter_new_spending_price = State()
     enter_new_description = State()
+    enter_new_spending_type = State()
 
     
 
