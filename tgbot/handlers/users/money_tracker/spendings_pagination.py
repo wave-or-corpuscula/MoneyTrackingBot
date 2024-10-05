@@ -27,7 +27,7 @@ async def cancel_spendings_pagination(callback: CallbackQuery, state: FSMContext
     await callback.message.edit_text(**ScreenManager.SETTINGS_MENU.as_kwargs())
 
 
-# --- Навигация по тратам --- #
+# --- Пагинация по тратам --- #
 
 @spendings_pagination_router.callback_query(
     PaginationCbData.filter(F.action == PaginationActions.next),
@@ -82,13 +82,14 @@ async def entered_goto_spending(message: Message, state: FSMContext, bot: Bot):
         await state.set_state(MoneyTrackerStates.spendings_pagination)
         await goto_spending_by_id(chat_id=message.chat.id, 
                                   message_id=message_id, 
-                                  bot=bot, 
+                                  bot=bot,
+                                  state=state,
                                   spending_ids=spending_ids, 
                                   cur_index=goto_element_number - 1)
         await message.delete()
     else:
-        # TODO: Обработать большой индекс
         await entered_invalid_goto_spending(message, state, bot)
+
 
 @spendings_pagination_router.message(
     StateFilter(MoneyTrackerStates.enter_spending_page)
@@ -104,8 +105,33 @@ async def entered_invalid_goto_spending(message: Message, state: FSMContext, bot
     finally:
         await message.delete()
 
+# TODO: Удаление трат
+# --- Пагинация по тратам --- #
 
-# --- Навигация по тратам --- #
+
+
+
+# --- Удаление траты --- #
+
+@spendings_pagination_router.callback_query(
+    StateFilter(MoneyTrackerStates.spendings_pagination),
+    PaginationCbData.filter(F.action == PaginationActions.delete)
+)
+async def delete_spending(callback: CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    cur_index = state_data.get("current_index")
+    spending_ids : list[int] = state_data.get("spending_ids")
+    Database.delete_user_spending(spending_ids[cur_index])
+    spending_ids.pop(cur_index)
+    await state.update_data({"spending_ids": spending_ids})
+    await callback.answer("Трата удалена")
+    await offset_spendings(-1, state, callback.message)
+
+# --- Удаление траты --- #
+
+
+# TODO: Изменение трат
+# TODO: Нормальный формат даты
 
 
 async def offset_spendings(offset: int, state: FSMContext, message: Message):
@@ -124,6 +150,7 @@ async def goto_spending(message: Message, spending_ids: list[int], cur_index: in
     spending = Database.get_user_spending(spending_ids[cur_index])
     await message.edit_text(**ScreenManager.SPENDINGS_PAGINATION.as_kwargs(cur=cur_index + 1, total=len(spending_ids), spending=spending))
 
-async def goto_spending_by_id(message_id: int, chat_id: int, bot: Bot, spending_ids: list[int], cur_index: int):
+async def goto_spending_by_id(message_id: int, chat_id: int, bot: Bot, state: FSMContext, spending_ids: list[int], cur_index: int):
+    await state.update_data({"current_index": cur_index})
     spending = Database.get_user_spending(spending_ids[cur_index])
     await bot.edit_message_text(chat_id=chat_id, message_id=message_id, **ScreenManager.SPENDINGS_PAGINATION.as_kwargs(cur=cur_index + 1, total=len(spending_ids), spending=spending))

@@ -78,7 +78,8 @@ def about_text():
 
 def spendings_page_text(cur: int, total: int, spending: Spending):
     content = [
-        f"<b>Трата: {cur} из {total}</b>\n",
+        f"<b>Трата: {cur} из {total}</b>",
+        f"<i>Категория:</i> {spending.spending_type_id.type_name}",
         f"<i>Дата: {spending.spending_date}</i>\n",
         f"<u>Сумма</u>: {spending.spending}",
     ]

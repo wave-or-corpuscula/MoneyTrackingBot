@@ -111,4 +111,10 @@ class Database:
     
     @staticmethod
     def get_user_spending(spending_id: int) -> Spending:
-        return Spending.get(spending_id)
+        return (Spending.select()
+                .where(Spending.id == spending_id)
+                .join(SpendingType, on=(Spending.spending_type_id == SpendingType.id)))[0]
+    
+    @staticmethod
+    def delete_user_spending(spending_id: int) -> None:
+        Spending.delete().where(Spending.id == spending_id).execute()
