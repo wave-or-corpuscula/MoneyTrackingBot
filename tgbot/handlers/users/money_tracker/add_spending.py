@@ -130,3 +130,5 @@ async def invalid_spending(message: types.Message, state: FSMContext, bot: Bot):
     await message.delete()
 
 # --- Невалидный ввод траты --- #
+
+# TODO: Сделать шорткат на ввод (из главного меню введенное числа воспринимается, как трата(та))

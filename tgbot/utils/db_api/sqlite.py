@@ -130,3 +130,5 @@ class Database:
     @staticmethod
     def update_spending_spending_type(spending_id: int, new_spending_type_id: str):
         Spending.update({Spending.spending_type_id: new_spending_type_id}).where(Spending.id == spending_id).execute()
+
+# TODO: Добавить логи из БД

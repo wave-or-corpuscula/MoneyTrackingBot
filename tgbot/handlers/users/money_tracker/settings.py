@@ -36,7 +36,7 @@ async def show_spending_types_list_for_edit(callback: types.CallbackQuery, state
     await state.set_state(MoneyTrackerStates.spending_types_edit_list)
     await callback.message.edit_text(**ScreenManager.SETTINGS_EDIT_SPENDING_TYPES_LIST.as_kwargs(user_id=callback.from_user.id))
 
-
+# TODO: Переместить изменение трат на главный экран
 @settings_router.callback_query(
         MTSettingsMenuCbData.filter(F.action == MTSettingsMenuActions.edit_spendings),
         StateFilter(MoneyTrackerStates.choosing_setting)

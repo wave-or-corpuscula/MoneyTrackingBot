@@ -54,8 +54,7 @@ async def main():
     config : Config = load_config(".env")
 
     if config.tg_bot.use_redis:
-        pass
-        # storage = RedisStorage() # TODO: Reddis initialization
+        storage = RedisStorage.from_url("redis://localhost:6379/0") # TODO: Reddis initialization
     else: 
         storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))

@@ -19,6 +19,7 @@ from tgbot.keyboards.money_tracker.spendings_pagination_kb import PaginationActi
 
 spendings_pagination_router = Router(name=__name__)
 
+# TODO: Обработка отсутствия трат
 
 @spendings_pagination_router.callback_query(
     NavigationCbData.filter(F.navigation == NavigationActions.back),
