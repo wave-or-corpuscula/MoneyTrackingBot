@@ -1,10 +1,9 @@
 import logging
 
-from aiogram import types, F, Router, Bot
+from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
-from aiogram.filters import Command, StateFilter
-from aiogram.utils.formatting import as_list, Italic
+from aiogram.filters import StateFilter
 from aiogram.enums.content_type import ContentType
 
 from tgbot.models import Spending
@@ -132,7 +131,6 @@ async def delete_spending(callback: CallbackQuery, state: FSMContext):
 # --- Удаление траты --- #
 
 
-# TODO: Изменение трат
 # --- Изменение траты --- #
 
 @spendings_pagination_router.callback_query(

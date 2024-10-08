@@ -273,3 +273,13 @@ class ScreenManager:
         text=enter_valid_spending_spending_type_text,
         reply_markup=edit_spending_kb
     )
+
+    SHORTCUT_CHOOSE_SPENDING_TYPE = Screen(
+        text="Выберите категорию для введенной траты:",
+        reply_markup=build_spending_types_kb
+    )
+
+    MAIN_MENU_FROM_SHORTCUT = Screen(
+        text=lambda spending: f"<i>Трата <u>{spending}</u> успешно добавлена!</i>\n\n<b>Отслеживание трат</b>\n\nВыберите нужное:",
+        reply_markup=money_tracker_menu_kb
+    )

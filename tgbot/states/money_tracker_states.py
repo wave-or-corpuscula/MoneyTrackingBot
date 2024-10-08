@@ -26,5 +26,9 @@ class MoneyTrackerStates(StatesGroup):
     enter_new_description = State()
     enter_new_spending_type = State()
 
+    # --- Shortcut spending adding --- #
+
+    choose_spending_type_shortcut = State()
+
     
 
