@@ -10,14 +10,13 @@ from tgbot.utils import Database, ScreenManager
 
 common_router = Router(name=__name__)
 
-# TODO: Сделать пагинацию по тратам пользователя с возможностью изменить данные траты
-# TODO: Поменять Тип траты на Категорию
 
 @common_router.message(Command("start"), StateFilter(None))
 async def command_start(message: Message, state: FSMContext, db: Database):
     db.add_user(message.from_user.id, message.from_user.full_name)
     await state.set_state(MoneyTrackerStates.choosing_service)
-    await message.answer(**ScreenManager.MONEY_TRACKER_MENU.as_kwargs())
+    msg = await message.answer(**ScreenManager.MONEY_TRACKER_MENU.as_kwargs())
+    await state.set_data({"main_message_id": msg.message_id})
 
 # Продвинутое решение работы с пользовательским именем (ни и вообще, если нужно вывести то, что ввел пользователь)
 @common_router.message(Command("hello"), StateFilter("*"))

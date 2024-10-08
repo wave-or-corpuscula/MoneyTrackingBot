@@ -42,7 +42,7 @@ async def no_spending_types_avaliable(callback: types.CallbackQuery):
         StateFilter(MoneyTrackerStates.choosing_service)
 )
 async def add_spending_script(callback: types.CallbackQuery, state: FSMContext):
-    await state.set_data({"chat_id": callback.message.chat.id, "message_id": callback.message.message_id})
+    await state.update_data({"chat_id": callback.message.chat.id, "message_id": callback.message.message_id})
     await state.set_state(MoneyTrackerStates.choose_spending_type)
     await callback.message.edit_text(**ScreenManager.SPENDING_TYPE_CHOOSING.as_kwargs(user_id=callback.from_user.id))
 
@@ -130,5 +130,3 @@ async def invalid_spending(message: types.Message, state: FSMContext, bot: Bot):
     await message.delete()
 
 # --- Невалидный ввод траты --- #
-
-# TODO: Сделать шорткат на ввод (из главного меню введенное числа воспринимается, как трата(та))

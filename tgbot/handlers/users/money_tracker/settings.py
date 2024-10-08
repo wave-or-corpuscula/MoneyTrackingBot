@@ -43,7 +43,7 @@ async def show_spending_types_list_for_edit(callback: types.CallbackQuery, state
 )
 async def spendings_pagination(callback: types.CallbackQuery, state: FSMContext, db: Database):
     spending_ids = db.get_spendings_ids(callback.from_user.id)
-    await state.set_data({
+    await state.update_data({
         "spending_ids": spending_ids,
         "current_index": len(spending_ids) - 1
         })

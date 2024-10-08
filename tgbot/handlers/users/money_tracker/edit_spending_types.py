@@ -185,7 +185,7 @@ async def max_spending_types_amount(callback: types.CallbackQuery, config: Confi
 	StateFilter(MoneyTrackerStates.spending_types_edit_list)
 )
 async def add_new_spending_type(callback: types.CallbackQuery, state: FSMContext):
-	await state.set_data({"message_id": callback.message.message_id})
+	await state.update_data({"message_id": callback.message.message_id})
 	await state.set_state(MoneyTrackerStates.spending_type_enter_new)
 	await callback.message.edit_text(**ScreenManager.ENTER_NEW_SPENDING_TYPE.as_kwargs())
 
