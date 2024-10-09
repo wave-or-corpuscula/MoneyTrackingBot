@@ -20,7 +20,7 @@ from tgbot.utils.db_api.sqlite import Database
 from tgbot.handlers import routers
 
 
-async def on_startup(dp: Dispatcher, db: Database):
+async def on_startup_polling(dp: Dispatcher, db: Database):
     db.create_tables()
 
 
@@ -54,7 +54,7 @@ async def main():
     config : Config = load_config(".env")
 
     if config.tg_bot.use_redis:
-        storage = RedisStorage.from_url("redis://localhost:6379/0")
+        pass# storage = RedisStorage.from_url("redis://localhost:6379/0")
     else: 
         storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -86,7 +86,7 @@ async def main():
             )
         else:
             # Use long polling
-            await on_startup(dp, db)
+            await on_startup_polling(dp, db)
             await bot.delete_webhook(drop_pending_updates=True)
             await dp.start_polling(bot)
     finally:

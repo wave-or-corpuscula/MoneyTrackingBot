@@ -7,22 +7,24 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from tgbot.misc.callback_data.navigation import NavigationCbData, NavigationActions
 
 
-class MoneyTrackerMenuActions(Enum):
+class MenuActions(Enum):
     add_spending = "add_spending"
     show_stats = "show_stats"
     settings = "settings"
+    edit_spendings = "edit_spendings"
     about = "about"
 
 
-class MoneyTrackerMenuCbData(CallbackData, prefix="money_tracker_menu"):
-    action : MoneyTrackerMenuActions
+class MenuCbData(CallbackData, prefix="money_tracker_menu"):
+    action : MenuActions
     
 
 money_tracker_menu_list = [
-    [InlineKeyboardButton(text="💵 Добавить трату", callback_data=MoneyTrackerMenuCbData(action=MoneyTrackerMenuActions.add_spending).pack())],
-    [InlineKeyboardButton(text="📝 Статистика трат", callback_data=MoneyTrackerMenuCbData(action=MoneyTrackerMenuActions.show_stats).pack())],
-    [InlineKeyboardButton(text="⚙️ Настройки", callback_data=MoneyTrackerMenuCbData(action=MoneyTrackerMenuActions.settings).pack())],
-    [InlineKeyboardButton(text="ℹ️ О боте", callback_data=MoneyTrackerMenuCbData(action=MoneyTrackerMenuActions.about).pack())],
+    [InlineKeyboardButton(text="💵 Добавить трату", callback_data=MenuCbData(action=MenuActions.add_spending).pack())],
+    [InlineKeyboardButton(text="📝 Статистика трат", callback_data=MenuCbData(action=MenuActions.show_stats).pack())],
+    [InlineKeyboardButton(text="✏️ Редактировать траты", callback_data=MenuCbData(action=MenuActions.edit_spendings).pack())],
+    [InlineKeyboardButton(text="⚙️ Настройки", callback_data=MenuCbData(action=MenuActions.settings).pack())],
+    [InlineKeyboardButton(text="ℹ️ О боте", callback_data=MenuCbData(action=MenuActions.about).pack())],
 ]
 
 builder = InlineKeyboardBuilder(markup=money_tracker_menu_list)

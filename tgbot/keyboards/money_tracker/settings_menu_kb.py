@@ -18,7 +18,6 @@ class MTSettingsMenuCbData(CallbackData, prefix="mt_settings_menu"):
 
 settings_menu_list = [
     [InlineKeyboardButton(text="🖋️ Изменить категории", callback_data=MTSettingsMenuCbData(action=MTSettingsMenuActions.spending_types).pack())],
-    [InlineKeyboardButton(text="✏️ Редактировать траты", callback_data=MTSettingsMenuCbData(action=MTSettingsMenuActions.edit_spendings).pack())],
     [InlineKeyboardButton(text="↩️ Назад", callback_data=NavigationCbData(navigation=NavigationActions.back).pack())],
 ]
 

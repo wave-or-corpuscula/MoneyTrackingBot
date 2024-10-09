@@ -12,7 +12,7 @@ from tgbot.misc.callback_data.navigation import NavigationCbData, NavigationActi
 
 from tgbot.utils import Database, ScreenManager
 from tgbot.keyboards.money_tracker.spending_types_kb import SpendingTypesCbData
-from tgbot.keyboards.money_tracker.menu_kb import MoneyTrackerMenuActions, MoneyTrackerMenuCbData
+from tgbot.keyboards.money_tracker.menu_kb import MenuActions, MenuCbData
 
 from tgbot.middlewares import DescriptionExtractMiddleware
 from tgbot.filters import ZeroSpendingTypesFilter
@@ -26,7 +26,7 @@ add_spending_router.message.middleware(DescriptionExtractMiddleware())
 # --- Нет типов трат --- #
 
 @add_spending_router.callback_query(
-        MoneyTrackerMenuCbData.filter(F.action == MoneyTrackerMenuActions.add_spending),
+        MenuCbData.filter(F.action == MenuActions.add_spending),
         StateFilter(MoneyTrackerStates.choosing_service),
         ZeroSpendingTypesFilter()
 )
@@ -38,7 +38,7 @@ async def no_spending_types_avaliable(callback: types.CallbackQuery):
 # --- Выбор добавления новой траты --- #
 
 @add_spending_router.callback_query(
-        MoneyTrackerMenuCbData.filter(F.action == MoneyTrackerMenuActions.add_spending),
+        MenuCbData.filter(F.action == MenuActions.add_spending),
         StateFilter(MoneyTrackerStates.choosing_service)
 )
 async def add_spending_script(callback: types.CallbackQuery, state: FSMContext):

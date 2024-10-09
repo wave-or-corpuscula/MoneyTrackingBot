@@ -4,3 +4,4 @@ from .valid_spending_filter import ValidSpendingFilter
 from .zero_spending_types_filter import ZeroSpendingTypesFilter
 from .valid_integer_filter import ValidIntegerFilter
 from .valid_spending_price_filter import ValidSpendingPriceFilter
+from .zero_spendings_filter import ZeroSpendingsFilter

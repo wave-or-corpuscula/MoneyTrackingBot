@@ -8,14 +8,14 @@ from tgbot.utils import Database
 from tgbot.models import Spending
 
 from tgbot.keyboards import *
-from tgbot.keyboards.money_tracker.edit_spending_types_kb import build_spending_types_for_edit_kb, edit_spending_type_kb
-from tgbot.keyboards.money_tracker.spending_types_kb import build_spending_types_kb
-from tgbot.keyboards.money_tracker.menu_kb import money_tracker_menu_kb
 from tgbot.keyboards.money_tracker.statistics_kb import statistics_kb
+from tgbot.keyboards.money_tracker.menu_kb import money_tracker_menu_kb
 from tgbot.keyboards.money_tracker.settings_menu_kb import settings_menu_kb
-from tgbot.keyboards.money_tracker.confirm_deleting_kb import confirm_deleting_kb
-from tgbot.keyboards.money_tracker.spendings_pagination_kb import spendings_pagination_kb
 from tgbot.keyboards.money_tracker.edit_spending_kb import edit_spending_kb
+from tgbot.keyboards.money_tracker.confirm_deleting_kb import confirm_deleting_kb
+from tgbot.keyboards.money_tracker.spending_types_kb import build_spending_types_kb
+from tgbot.keyboards.money_tracker.spendings_pagination_kb import spendings_pagination_kb
+from tgbot.keyboards.money_tracker.edit_spending_types_kb import build_spending_types_for_edit_kb, edit_spending_type_kb
 
 
 class Screen:
@@ -40,18 +40,6 @@ def show_statistics_text(user_id: int, db: Database):
     ]
     return "\n".join(text)
 
-
-def spending_successful_added_text(user_spending: str,  spending_type_id: int, message: Message, db: Database):
-    user_spending = float(user_spending.replace(",", "."))
-    if user_spending < 0: raise Exception
-    db.add_spending(user_id=message.from_user.id, spending_type_id=spending_type_id, spending=user_spending)
-    logging.info(f"User: {message.from_user.full_name} added spending {user_spending}")
-
-    text = [
-        "<b>Отслеживание трат</b>\n<i>Трата <u>{user_spending}</u> успешно добавлена!</i>"
-    ]
-
-    return "\n".join(text)
 
 def editing_spending_type_text(user_id: int, type_id: int):
     type_name = Database.get_spending_type_name(user_id=user_id, type_id=type_id)
@@ -81,7 +69,7 @@ def spendings_page_text(cur: int, total: int, spending: Spending):
     content = [
         f"<b>Трата: {cur} из {total}</b>",
         f"<i>Категория:</i> {spending.spending_type_id.type_name}",
-        f"<i>Дата: {spending.spending_date}</i>\n",
+        f"<i>Дата: {spending.spending_date.strftime("%d-%m-%Y, %H:%M:%S")}</i>\n",
         f"<u>Сумма</u>: {spending.spending}",
     ]
 
@@ -94,7 +82,7 @@ def edit_spending_text(spending: Spending):
     content = [
         "<b>Трата:</b>\n",
         f"<b>Категория:</b> {spending.spending_type_id.type_name}",
-        f"<i>Дата: {spending.spending_date}</i>\n",
+        f"<i>Дата: {spending.spending_date.strftime("%d-%m-%Y, %H:%M:%S")}</i>\n",
         f"<b>Сумма</b>: <u>{spending.spending}</u>",
     ]
 
@@ -282,4 +270,9 @@ class ScreenManager:
     MAIN_MENU_FROM_SHORTCUT = Screen(
         text=lambda spending: f"<i>Трата <u>{spending}</u> успешно добавлена!</i>\n\n<b>Отслеживание трат</b>\n\nВыберите нужное:",
         reply_markup=money_tracker_menu_kb
+    )
+
+    NO_SPENDINGS_ALERT = Screen(
+        text="У вас еще нет трат для редактирования",
+        reply_markup=None
     )

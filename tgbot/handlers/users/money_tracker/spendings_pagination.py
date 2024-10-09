@@ -18,15 +18,14 @@ from tgbot.keyboards.money_tracker.spendings_pagination_kb import PaginationActi
 
 spendings_pagination_router = Router(name=__name__)
 
-# TODO: Обработка отсутствия трат
 
 @spendings_pagination_router.callback_query(
     NavigationCbData.filter(F.navigation == NavigationActions.back),
     StateFilter(MoneyTrackerStates.spendings_pagination)
 )
 async def cancel_spendings_pagination(callback: CallbackQuery, state: FSMContext):
-    await state.set_state(MoneyTrackerStates.choosing_setting)
-    await callback.message.edit_text(**ScreenManager.SETTINGS_MENU.as_kwargs())
+    await state.set_state(MoneyTrackerStates.choosing_service)
+    await callback.message.edit_text(**ScreenManager.MONEY_TRACKER_MENU.as_kwargs())
 
 
 # --- Пагинация по тратам --- #
@@ -63,8 +62,8 @@ async def goto_spending_option(callback: CallbackQuery, state: FSMContext):
 # Отмена
 
 @spendings_pagination_router.callback_query(
-    NavigationCbData.filter(F.navigation == NavigationActions.back),
-    StateFilter(MoneyTrackerStates.enter_spending_page)
+    StateFilter(MoneyTrackerStates.enter_spending_page),
+    NavigationCbData.filter(F.navigation == NavigationActions.back)
 )
 async def cancel_goto_spending(callback: CallbackQuery, state: FSMContext):
     await state.set_state(MoneyTrackerStates.spendings_pagination)
@@ -72,8 +71,8 @@ async def cancel_goto_spending(callback: CallbackQuery, state: FSMContext):
 
 
 @spendings_pagination_router.message(
-    F.content_type == ContentType.TEXT,
     StateFilter(MoneyTrackerStates.enter_spending_page),
+    F.content_type == ContentType.TEXT,
     ValidIntegerFilter(positive=True)
 )
 async def entered_goto_spending(message: Message, state: FSMContext, bot: Bot):
@@ -95,8 +94,8 @@ async def entered_goto_spending(message: Message, state: FSMContext, bot: Bot):
 
 
 @spendings_pagination_router.message(
-    F.content_type == ContentType.TEXT,
-    StateFilter(MoneyTrackerStates.enter_spending_page)
+    StateFilter(MoneyTrackerStates.enter_spending_page),
+    F.content_type == ContentType.TEXT
 )
 async def entered_invalid_goto_spending(message: Message, state: FSMContext, bot: Bot):
     state_data = await state.get_data()
@@ -124,6 +123,11 @@ async def delete_spending(callback: CallbackQuery, state: FSMContext):
     spending_ids : list[int] = state_data.get("spending_ids")
     Database.delete_user_spending(spending_ids[cur_index])
     spending_ids.pop(cur_index)
+
+    if len(spending_ids) == 0:
+        await cancel_spendings_pagination(callback, state)
+        return
+
     await state.update_data({"spending_ids": spending_ids})
     await callback.answer("Трата удалена")
     await offset_spendings(-1, state, callback.message)
@@ -174,8 +178,8 @@ async def cancel_edit_spending_option(callback: CallbackQuery, state: FSMContext
 
 
 @spendings_pagination_router.message(
-    F.content_type == ContentType.TEXT,
     StateFilter(MoneyTrackerStates.enter_new_spending_price),
+    F.content_type == ContentType.TEXT,
     ValidSpendingPriceFilter()
 )
 async def enter_valid_spending_price(message: Message, state: FSMContext, bot: Bot):
@@ -196,8 +200,8 @@ async def enter_valid_spending_price(message: Message, state: FSMContext, bot: B
 
 
 @spendings_pagination_router.message(
-    F.content_type == ContentType.TEXT,
     StateFilter(MoneyTrackerStates.enter_new_spending_price),
+    F.content_type == ContentType.TEXT
 )
 async def enter_invalid_spending_price(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
@@ -231,8 +235,8 @@ async def cancel_edit_description_option(callback: CallbackQuery, state: FSMCont
     await spending_settings_menu_show(callback, state)
 
 @spendings_pagination_router.message(
-    F.content_type == ContentType.TEXT,
-    StateFilter(MoneyTrackerStates.enter_new_description)
+    StateFilter(MoneyTrackerStates.enter_new_description),
+    F.content_type == ContentType.TEXT
 )
 async def enter_new_description(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
@@ -290,14 +294,13 @@ async def enter_new_spending_spending_type(callback: CallbackQuery, state: FSMCo
 
 # --- Изменение траты --- #
 
-
-# TODO: Нормальный формат даты
-
-
 async def offset_spendings(offset: int, state: FSMContext, message: Message):
     state_data = await state.get_data()
     cur_index = state_data.get("current_index")
     spending_ids = state_data.get("spending_ids")
+
+    if len(spending_ids) == 1 and offset != 0:
+        return
 
     next_index = (offset + cur_index) % len(spending_ids)
 
