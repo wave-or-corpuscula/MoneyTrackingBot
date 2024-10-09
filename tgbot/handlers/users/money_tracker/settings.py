@@ -33,5 +33,3 @@ async def cancel_settings(callback: types.CallbackQuery, state: FSMContext):
 async def show_spending_types_list_for_edit(callback: types.CallbackQuery, state: FSMContext):
     await state.set_state(MoneyTrackerStates.spending_types_edit_list)
     await callback.message.edit_text(**ScreenManager.SETTINGS_EDIT_SPENDING_TYPES_LIST.as_kwargs(user_id=callback.from_user.id))
-
-# TODO: Переместить изменение трат на главный экран

@@ -81,7 +81,6 @@ class ExcelManager:
                     if len(str(cell.value)) > max_length:
                         max_length = len(str(cell.value))
                 except:
-                    print("Excepted")
                     pass
             adjusted_width = (max_length + 2) * 1.2
             ws.column_dimensions[column].width = adjusted_width

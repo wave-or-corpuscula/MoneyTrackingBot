@@ -50,11 +50,15 @@ async def handle_webhook(bot: Bot, dp: Dispatcher, BOT_TOKEN: str, request):
 async def main():
 
     nest_asyncio.apply()
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        datefmt="%Y/%m/%d %H:%M:%S",
+        format="[%(asctime)s][%(name)s][%(levelname)s] ==> %(message)s",
+    )
     config : Config = load_config(".env")
 
     if config.tg_bot.use_redis:
-        pass# storage = RedisStorage.from_url("redis://localhost:6379/0")
+        storage = RedisStorage.from_url("redis://localhost:6379/0")
     else: 
         storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
