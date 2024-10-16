@@ -182,4 +182,4 @@ class Database:
         logging.info(f"DB spending with id: {spending_id}, now has {new_spending_type_id} type")
         Spending.update({Spending.spending_type_id: new_spending_type_id}).where(Spending.id == spending_id).execute()
 
-# TODO: Добавить логи из БД
+# TODO: Добавить логи из БД (БОЛЬШЕ ЛОГОВ, может, даже сделать отдельный логер для базы данных?????!!!!)
